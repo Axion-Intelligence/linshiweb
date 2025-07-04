@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPSM智能仪表系统</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0 20px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .user-info {
+            font-size: 14px;
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+            width: 200px;
+            background: #2c3e50;
+            color: white;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #34495e;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-item:hover {
+            background-color: #34495e;
+        }
+
+        .menu-item.active {
+            background-color: #3498db;
+        }
+
+        .menu-item .icon {
+            margin-right: 10px;
+            width: 16px;
+            height: 16px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .content-header {
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb span {
+            color: #666;
+        }
+
+        .breadcrumb .current {
+            color: #3498db;
+            font-weight: 500;
+        }
+
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            color: #555;
+            white-space: nowrap;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        .filter-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .search-box {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 200px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .chart-subtitle {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .legend {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .pagination button:hover {
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        .pagination button.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔧 SPSM智能仪表系统</h1>
+        <div class="user-info">测试监示例账号</div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="menu-item">
+                <span class="icon">🏠</span>首页
+            </div>
+            <div class="menu-item">
+                <span class="icon">📊</span>仪表盘数据
+            </div>
+            <div class="menu-item active">
+                <span class="icon">📈</span>数据编码
+            </div>
+            <div class="menu-item">
+                <span class="icon">⚙️</span>安装维护
+            </div>
+            <div class="menu-item">
+                <span class="icon">📋</span>仪表管理
+            </div>
+            <div class="menu-item">
+                <span class="icon">📊</span>仪表模板
+            </div>
+            <div class="menu-item">
+                <span class="icon">🔧</span>终端管理
+            </div>
+            <div class="menu-item">
+                <span class="icon">📅</span>日志管理
+            </div>
+            <div class="menu-item">
+                <span class="icon">📁</span>分组管理
+            </div>
+            <div class="menu-item">
+                <span class="icon">👤</span>用户中心
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="content-header">
+                <div class="breadcrumb">
+                    <span>📊</span>
+                    <span>数据编码</span>
+                    <span>/</span>
+                    <span class="current">列新</span>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <span class="filter-label">来源类型</span>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active">全部</button>
+                            <button class="filter-btn">智能表</button>
+                            <button class="filter-btn">单指针表</button>
+                            <button class="filter-btn">字轮表</button>
+                            <button class="filter-btn">数显表</button>
+                            <button class="filter-btn">压差表</button>
+                            <button class="filter-btn">电动表配件</button>
+                            <button class="filter-btn">其他</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <span class="filter-label">仪表类型</span>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active">全部</button>
+                            <button class="filter-btn">温度表</button>
+                            <button class="filter-btn">压力表</button>
+                            <button class="filter-btn">水表</button>
+                            <button class="filter-btn">电表</button>
+                            <button class="filter-btn">燃气表</button>
+                            <button class="filter-btn">压差表</button>
+                            <button class="filter-btn">组合数显表</button>
+                            <button class="filter-btn">其他</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <span class="filter-label">搜索</span>
+                        <input type="text" class="search-box" placeholder="仪表编号">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <span class="filter-label">类型</span>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active">折线图</button>
+                            <button class="filter-btn">柱状图</button>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn-primary">🔍 导出数据</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div>
+                            <div class="chart-title">压差表: 压差表</div>
+                            <div class="chart-subtitle">设计分站编号:设计分站编号:460048744101770</div>
+                        </div>
+                        <div class="legend">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #66bb6a;"></div>
+                                <span>实时</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #ef5350;"></div>
+                                <span>告警值</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="pressureChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div>
+                            <div class="chart-title">水表: 智能水表</div>
+                            <div class="chart-subtitle">设计分站编号:设计分站编号:刷卡</div>
+                        </div>
+                        <div class="legend">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #42a5f5;"></div>
+                                <span>实时</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #ef5350;"></div>
+                                <span>告警值</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="waterChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pagination">
+                <input type="text" placeholder="开始时间" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-right: 10px;">
+                <span>至</span>
+                <input type="text" placeholder="结束时间" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin: 0 10px;">
+                <button>近一天</button>
+                <button class="active">近七天</button>
+                <button>近十五天</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 压差表图表
+        const pressureCtx = document.getElementById('pressureChart').getContext('2d');
+        const pressureChart = new Chart(pressureCtx, {
+            type: 'line',
+            data: {
+                labels: ['', '', '', '', '', '', ''],
+                datasets: [{
+                    label: '实时',
+                    data: [43.8, 43.7, 43.6, 43.5, 43.4, 43.3, 43.2],
+                    borderColor: '#66bb6a',
+                    backgroundColor: 'transparent',
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#66bb6a'
+                }, {
+                    label: '告警值',
+                    data: [44, 44, 44, 44, 44, 44, 44],
+                    borderColor: '#ef5350',
+                    backgroundColor: 'transparent',
+                    borderDash: [5, 5],
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 41,
+                        max: 44.5,
+                        grid: {
+                            color: '#f0f0f0'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#f0f0f0'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 水表图表
+        const waterCtx = document.getElementById('waterChart').getContext('2d');
+        const waterChart = new Chart(waterCtx, {
+            type: 'line',
+            data: {
+                labels: ['', '', '', '', '', '', ''],
+                datasets: [{
+                    label: '实时',
+                    data: [650, 660, 665, 670, 668, 672, 675],
+                    borderColor: '#42a5f5',
+                    backgroundColor: 'transparent',
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#42a5f5'
+                }, {
+                    label: '告警值',
+                    data: [1000, 1000, 1000, 1000, 1000, 1000, 1000],
+                    borderColor: '#ef5350',
+                    backgroundColor: 'transparent',
+                    borderDash: [5, 5],
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 500,
+                        max: 1100,
+                        grid: {
+                            color: '#f0f0f0'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#f0f0f0'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 添加交互功能
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 移除同组其他按钮的active类
+                const group = this.closest('.filter-buttons');
+                group.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                // 添加active类到当前按钮
+                this.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

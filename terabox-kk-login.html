@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会員管理システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+        }
+        
+        /* 左侧主区域 - 只显示背景图 */
+        .main-content {
+            flex: 1;
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+        }
+        
+        /* 光线扫描效果 */
+        .scan-light {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 800px;
+            height: 800px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .scan-beam {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0) 40%, 
+                rgba(255, 255, 255, 0.6) 50%, 
+                rgba(255, 255, 255, 0) 60%, 
+                transparent 100%
+            );
+            transform-origin: left center;
+            animation: scanRotate 6s linear infinite;
+        }
+        
+        .scan-beam:nth-child(2) {
+            animation-delay: 2s;
+            opacity: 0.6;
+        }
+        
+        .scan-beam:nth-child(3) {
+            animation-delay: 4s;
+            opacity: 0.4;
+        }
+        
+        @keyframes scanRotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* 圆形光晕效果 */
+        .light-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: ringPulse 3s ease-in-out infinite;
+            z-index: 1;
+        }
+        
+        .light-ring:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            animation-delay: 1s;
+            opacity: 0.5;
+        }
+        
+        .light-ring:nth-child(3) {
+            width: 500px;
+            height: 500px;
+            animation-delay: 2s;
+            opacity: 0.3;
+        }
+        
+        @keyframes ringPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.5;
+            }
+        }
+        
+        /* 角落光斑效果 */
+        .corner-light {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            animation: cornerGlow 4s ease-in-out infinite alternate;
+            z-index: 1;
+        }
+        
+        .corner-light:nth-child(1) {
+            top: -100px;
+            left: -100px;
+        }
+        
+        .corner-light:nth-child(2) {
+            bottom: -100px;
+            right: -100px;
+            animation-delay: 2s;
+        }
+        
+        @keyframes cornerGlow {
+            0% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0.6;
+                transform: scale(1.2);
+            }
+        }
+        
+        /* 标题区域 - 半透明背景 */
+        .title-section {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 30px 50px;
+            z-index: 2;
+        }
+        
+        .title-section h1 {
+            color: white;
+            font-size: 32px;
+            font-weight: normal;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+        
+        /* 右侧登录区域 */
+        .login-section {
+            width: 400px;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-container {
+            flex: 1;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .login-header {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 20px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .login-header::before {
+            content: '□';
+            font-size: 20px;
+        }
+        
+        .login-form {
+            margin-top: 40px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: flex;
+            align-items: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+            gap: 5px;
+        }
+        
+        .form-group label::before {
+            content: '👤';
+            font-size: 16px;
+            opacity: 0.5;
+        }
+        
+        .form-group:nth-child(2) label::before {
+            content: '🔒';
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background-color: #fafafa;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #333;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .password-save {
+            margin: 20px 0;
+        }
+        
+        .password-save a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        
+        .password-save a:hover {
+            color: #333;
+            text-decoration: underline;
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        .login-button:hover {
+            background-color: #000;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .login-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        .login-button.loading {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+        
+        /* Footer */
+        .footer {
+            padding: 20px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            border-top: 1px solid #eee;
+        }
+        
+        .footer a {
+            color: #666;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            color: #333;
+            text-decoration: underline;
+        }
+        
+        /* 成功消息样式 */
+        .success-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            display: none;
+            animation: slideInRight 0.3s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .login-section {
+                width: 100%;
+            }
+            
+            .main-content {
+                min-height: 300px;
+            }
+            
+            .title-section {
+                padding: 20px 30px;
+            }
+            
+            .title-section h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 左侧主内容区 - 只有背景图 -->
+    <div class="main-content">
+        <!-- 光线效果层 -->
+        <div class="corner-light"></div>
+        <div class="corner-light"></div>
+        
+        <!-- 扫描光线 -->
+        <div class="scan-light">
+            <div class="scan-beam"></div>
+            <div class="scan-beam"></div>
+            <div class="scan-beam"></div>
+        </div>
+        
+        <!-- 光环效果 -->
+        <div class="light-ring"></div>
+        <div class="light-ring"></div>
+        <div class="light-ring"></div>
+        
+        <!-- 标题区域 -->
+        <div class="title-section">
+            <h1>会員管理システム</h1>
+            <p class="subtitle">ようこそ会員管理システム</p>
+        </div>
+    </div>
+    
+    <!-- 右侧登录区域 -->
+    <div class="login-section">
+        <div class="login-header">
+            会員管理システム
+        </div>
+        
+        <div class="login-container">
+            <form class="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="account">アカウント</label>
+                    <input type="text" id="account" name="account" required placeholder="アカウントを入力してください">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">パスワード</label>
+                    <input type="password" id="password" name="password" required placeholder="パスワードを入力してください">
+                </div>
+                
+                <div class="password-save">
+                    <a href="#">パスワードを保存</a>
+                </div>
+                
+                <button type="submit" class="login-button" id="loginBtn">ログイン</button>
+            </form>
+        </div>
+        
+        <div class="footer">
+            Copyright © 2022-2024 <a href="#">Terabox Inc.</a> All Rights Reserved.
+        </div>
+    </div>
+    
+    <div class="success-message" id="successMessage">
+        ログイン成功！リダイレクト中...
+    </div>
+    
+    <script>
+        // 预设的用户信息
+        const presetUserInfo = {
+            "username": "測試展示賬號",
+            "password": null,
+            "mail": "244232@ee.com",
+            "phone": null,
+            "parentId": 0,
+            "type": null,
+            "groupId": null,
+            "createTime": "2023-03-23T02:01:11.000+0000",
+            "contactPerson": "Jack",
+            "address": null,
+            "company": "測試展示賬號",
+            "mailPush": 0,
+            "mailPushType": null,
+            "phonePush": 0,
+            "isDelete": 0,
+            "secondGroupId": null,
+            "backgroundPicUrl": null,
+            "pwd": "5ruLMI23DU2",
+            "twoFactorAuthentication": 0,
+            "groupName": null,
+            "parentGroupName": null,
+            "accountsIds": null,
+            "children": null
+        };
+        
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const loginButton = document.getElementById('loginBtn');
+            const originalText = loginButton.textContent;
+            
+            // 显示加载状态
+            loginButton.textContent = 'ログイン中...';
+            loginButton.disabled = true;
+            loginButton.classList.add('loading');
+            
+            // 模拟登录延迟
+            setTimeout(() => {
+                // 存储预设的用户信息到localStorage
+                localStorage.setItem('loglevel:INFO', JSON.stringify(presetUserInfo));
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('loginTime', new Date().toISOString());
+                
+                // 显示成功状态
+                loginButton.textContent = 'ログイン成功！';
+                loginButton.style.backgroundColor = '#4CAF50';
+                
+                // 显示成功消息
+                const successMessage = document.getElementById('successMessage');
+                successMessage.style.display = 'block';
+                
+                // 1.5秒后跳转
+                setTimeout(() => {
+                    window.location.href = 'https://47.103.60.131/#/index/analysis';
+                }, 1500);
+                
+            }, 1200);
+        }
+        
+        // 添加输入框聚焦效果
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateX(-2px)';
+                this.parentElement.style.transition = 'transform 0.2s ease';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateX(0)';
+            });
+        });
+        
+        // 页面加载动画
+        window.onload = function() {
+            const loginSection = document.querySelector('.login-section');
+            loginSection.style.opacity = '0';
+            loginSection.style.transform = 'translateX(20px)';
+            
+            setTimeout(() => {
+                loginSection.style.transition = 'all 0.5s ease';
+                loginSection.style.opacity = '1';
+                loginSection.style.transform = 'translateX(0)';
+            }, 100);
+        }
+    </script>
+</body>
+</html>

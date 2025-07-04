@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERABOX スマート検出システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            background-color: #1a365d;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            width: 32px;
+            height: 32px;
+            margin-right: 12px;
+            object-fit: contain;
+            border-radius: 6px;
+            background-color: white;
+            padding: 2px;
+        }
+        
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        
+        .user-info {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .container {
+            display: flex;
+            min-height: calc(100vh - 50px);
+        }
+        
+        .sidebar {
+            width: 200px;
+            background-color: #2d3748;
+            color: white;
+        }
+        
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #4a5568;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-item:hover {
+            background-color: #4a5568;
+        }
+        
+        .nav-item.active {
+            background-color: #3182ce;
+        }
+        
+        .nav-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            background-color: #a0aec0;
+            border-radius: 2px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .filter-section {
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .filter-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .filter-label {
+            font-weight: bold;
+            margin-right: 10px;
+            min-width: 60px;
+        }
+        
+        .filter-item {
+            padding: 4px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            background-color: #f7fafc;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .filter-item.active {
+            background-color: #3182ce;
+            color: white;
+            border-color: #3182ce;
+        }
+        
+        .search-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-input {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            width: 200px;
+        }
+        
+        .search-btn {
+            padding: 6px 12px;
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .btn-export {
+            background-color: #3182ce;
+            color: white;
+        }
+        
+        .btn-analysis {
+            background-color: #38a169;
+            color: white;
+        }
+        
+        .detection-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .detection-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            height: 180px;
+        }
+        
+        .card-header {
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-title {
+            font-weight: bold;
+            color: #2d3748;
+            font-size: 14px;
+        }
+        
+        .card-title.blue {
+            color: #3182ce;
+        }
+        
+        .reading-info {
+            font-size: 12px;
+            color: #718096;
+        }
+        
+        .signal-strength {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: #718096;
+        }
+        
+        .signal-bars {
+            display: flex;
+            gap: 2px;
+        }
+        
+        .signal-bar {
+            width: 3px;
+            height: 8px;
+            background-color: #38a169;
+            border-radius: 1px;
+        }
+        
+        .signal-bar:nth-child(2) {
+            height: 10px;
+        }
+        
+        .signal-bar:nth-child(3) {
+            height: 12px;
+        }
+        
+        .signal-bar:nth-child(4) {
+            height: 14px;
+        }
+        
+        .battery-icon {
+            width: 16px;
+            height: 10px;
+            border: 1px solid #38a169;
+            border-radius: 2px;
+            position: relative;
+            background-color: #38a169;
+        }
+        
+        .battery-icon::after {
+            content: '';
+            position: absolute;
+            right: -3px;
+            top: 2px;
+            width: 2px;
+            height: 6px;
+            background-color: #38a169;
+            border-radius: 0 1px 1px 0;
+        }
+        
+        .edit-icon {
+            color: #3182ce;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .card-image {
+            width: 255px;
+            height: 100%;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0;
+        }
+        
+        .meter-type-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            color: white;
+            background-color: rgba(0,0,0,0.7);
+        }
+        
+        .status-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .status-processing {
+            background-color: #ed8936;
+        }
+        
+        .status-online {
+            background-color: #38a169;
+        }
+        
+        .status-offline {
+            background-color: #e53e3e;
+        }
+        
+        .card-content {
+            padding: 12px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .edit-icon {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            color: #3182ce;
+            cursor: pointer;
+            font-size: 16px;
+            background: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .edit-icon:hover {
+            background-color: #f7fafc;
+        }
+        
+        .card-info {
+            font-size: 11px;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+        
+        .card-info strong {
+            color: #2d3748;
+            font-weight: 600;
+        }
+        
+        .card-info .value {
+            color: #4a5568;
+            font-weight: normal;
+        }
+        
+        .battery-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .battery-bar {
+            width: 20px;
+            height: 10px;
+            border: 1px solid #38a169;
+            border-radius: 2px;
+            position: relative;
+            background-color: #38a169;
+        }
+        
+        .battery-bar::after {
+            content: '';
+            position: absolute;
+            right: -3px;
+            top: 2px;
+            width: 2px;
+            height: 6px;
+            background-color: #38a169;
+            border-radius: 0 1px 1px 0;
+        }
+        
+        .signal-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .signal-dot {
+            width: 3px;
+            height: 3px;
+            background-color: #38a169;
+            border-radius: 50%;
+        }
+        
+        .signal-dot:nth-child(2) {
+            width: 4px;
+            height: 4px;
+        }
+        
+        .signal-dot:nth-child(3) {
+            width: 5px;
+            height: 5px;
+        }
+        
+        .signal-dot:nth-child(4) {
+            width: 6px;
+            height: 6px;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+        }
+        
+        .card-btn {
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 9px;
+            cursor: pointer;
+            border: none;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .card-btn.primary {
+            background-color: #3182ce;
+            color: white;
+        }
+        
+        .card-btn.secondary {
+            background-color: #718096;
+            color: white;
+        }
+        
+        .card-btn.warning {
+            background-color: #ed8936;
+            color: white;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            gap: 10px;
+        }
+        
+        .pagination button {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            background-color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .pagination button.active {
+            background-color: #3182ce;
+            color: white;
+            border-color: #3182ce;
+        }
+        
+        .pagination button:hover {
+            background-color: #f7fafc;
+        }
+        
+        /* 编辑模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #718096;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .modal-btn.cancel {
+            background-color: #e2e8f0;
+            color: #2d3748;
+        }
+        
+        .modal-btn.confirm {
+            background-color: #3182ce;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <img src="default.33b8ad3f.png" alt="Terabox Logo" class="logo">
+            <span class="title">TERABOX スマート検出システム</span>
+        </div>
+        <div class="user-info">テストアカウントユーザー</div>
+    </header>
+    
+    <div class="container">
+        <nav class="sidebar">
+            <div class="nav-item" onclick="navigateToHome()">
+    <div class="nav-icon"></div>
+    トップページ
+</div>
+<div class="nav-item active">
+    <div class="nav-icon"></div>
+    メーターの目盛
+</div>
+<div class="nav-item">
+    <div class="nav-icon"></div>
+    データの傾向
+</div>
+<div class="nav-item">
+    <div class="nav-icon"></div>
+    インストールの関連付け
+</div>
+<div class="nav-item">
+    <div class="nav-icon"></div>
+    メーターの管理
+</div>
+<div class="nav-item">
+    <div class="nav-icon"></div>
+    メーターの型
+</div>
+<div class="nav-item">
+    <div class="nav-icon"></div>
+    端末の管理
+</div>
+<div class="nav-item">
+    <div class="nav-icon"></div>
+    ログ管理
+</div>
+<div class="nav-item">
+    <div class="nav-icon"></div>
+    グループ管理
+</div>
+<div class="nav-item">
+    <div class="nav-icon"></div>
+    ユーザーセンター
+</div>
+        </nav>
+        
+        <main class="main-content">
+            <div class="filter-section">
+                <div class="filter-row">
+                    <span class="filter-label">メータータイプ</span>
+                    <span class="filter-item active">全部</span>
+                    <span class="filter-item">デジタルメーター</span>
+                    <span class="filter-item">温度計</span>
+                    <span class="filter-item">水道メーター</span>
+                    <span class="filter-item">電力メーター</span>
+                    <span class="filter-item">統合デジタル表示</span>
+                </div>
+                <div class="filter-row">
+                    <span class="filter-label">メーターソース</span>
+                    <span class="filter-item active">全部</span>
+                    <span class="filter-item">温度計</span>
+                    <span class="filter-item">圧力計</span>
+                    <span class="filter-item">水道メーター</span>
+                    <span class="filter-item">電力メーター</span>
+                    <span class="filter-item">圧力メーター</span>
+                    <span class="filter-item">統合デジタル表示</span>
+                    <span class="filter-item">その他</span>
+                </div>
+                <div class="filter-row">
+                    <span class="filter-label">動作状況</span>
+                    <input type="date" class="filter-item" style="border: 1px solid #e2e8f0;">
+                    <span>から</span>
+                    <input type="date" class="filter-item" style="border: 1px solid #e2e8f0;">
+                </div>
+                <div class="filter-row">
+                    <span class="filter-label">メーター状態</span>
+                    <span class="filter-item">オンライン</span>
+                    <span class="filter-item">オフライン</span>
+                </div>
+                <div class="search-section">
+                    <span class="filter-label">検索</span>
+                    <input type="text" class="search-input" placeholder="メーターコード">
+                    <button class="search-btn">🔍</button>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-export">Web認識結果をエクスポート</button>
+                <button class="btn btn-analysis">Webデータテーブルをエクスポート</button>
+            </div>
+            
+            <!-- Page 1 Content -->
+            <div id="page1" class="detection-grid">
+                <div class="detection-card">
+                    <div class="card-image">
+                        <img src="2025-07-03-00_03_28_384-113-流量计-0.jpg" alt="温度計">
+                        <div class="status-badge status-processing">画像取得中</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="edit-icon" onclick="openEditModal('王')">✏️</div>
+                        <div class="card-info"><strong>読数：</strong><span class="value">1 度</span></div>
+                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                        <div class="card-info"><strong>位置情報：</strong></div>
+                        <div class="card-info"><span class="value">默认分组-默认分组-1</span></div>
+                        <div class="card-info"><strong>採集時間：</strong></div>
+                        <div class="card-info"><span class="value">2024-06-20 21:00:23</span></div>
+                        <div class="card-actions">
+                            <button class="card-btn secondary">履歴データ</button>
+                            <button class="card-btn primary">規模データ</button>
+                            <button class="card-btn warning">修正記録</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detection-card">
+                    <div class="card-image">
+                        <img src="2025-07-03-00_01_56_345-113-压差表-0.jpg" alt="デジタル表示">
+                        <div class="status-badge status-processing">画像取得中</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="edit-icon" onclick="openEditModal('1')">✏️</div>
+                        <div class="card-info"><strong>読数：</strong><span class="value">123 倍</span></div>
+                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                        <div class="card-info"><strong>位置情報：</strong></div>
+                        <div class="card-info"><span class="value">液体タンク-A区域-2</span></div>
+                        <div class="card-info"><strong>採集時間：</strong></div>
+                        <div class="card-info"><span class="value">2023-07-03 11:01:08</span></div>
+                        <div class="card-actions">
+                            <button class="card-btn secondary">履歴データ</button>
+                            <button class="card-btn primary">規模データ</button>
+                            <button class="card-btn warning">修正記録</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detection-card">
+                    <div class="card-image">
+                        <img src="2024-06-20-20_00_34_681-113-千-0.jpg" alt="水道メーター">
+                        <div class="status-badge status-online">オンライン</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="edit-icon" onclick="openEditModal('水道蛇口監視')">✏️</div>
+                        <div class="card-info"><strong>読数：</strong><span class="value">123 L</span></div>
+                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                        <div class="card-info"><strong>位置情報：</strong></div>
+                        <div class="card-info"><span class="value">水道設備-B区域-1</span></div>
+                        <div class="card-info"><strong>採集時間：</strong></div>
+                        <div class="card-info"><span class="value">2023-07-03 01:03:03</span></div>
+                        <div class="card-actions">
+                            <button class="card-btn secondary">履歴データ</button>
+                            <button class="card-btn primary">規模データ</button>
+                            <button class="card-btn warning">修正記録</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detection-card">
+                    <div class="card-image">
+                        <img src="2025-07-03-00_03_22_653-113-水表培训-0.jpg" alt="圧力計">
+                        <div class="status-badge status-online">オンライン</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="edit-icon" onclick="openEditModal('圧力計')">✏️</div>
+                        <div class="card-info"><strong>読数：</strong><span class="value">46004874461770 Pa</span></div>
+                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                        <div class="card-info"><strong>位置情報：</strong></div>
+                        <div class="card-info"><span class="value">安全採取-C区域-3</span></div>
+                        <div class="card-info"><strong>採集時間：</strong></div>
+                        <div class="card-info"><span class="value">2023-07-03 01:01:54</span></div>
+                        <div class="card-actions">
+                            <button class="card-btn secondary">履歴データ</button>
+                            <button class="card-btn warning">修正記録</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detection-card">
+                    <div class="card-image">
+                        <img src="default.33b8ad3f.png" alt="デジタル表示">
+                        <div class="status-badge status-online">オンライン</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="edit-icon" onclick="openEditModal('144052093388')">✏️</div>
+                        <div class="card-info"><strong>読数：</strong><span class="value">144052093388 kWh</span></div>
+                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                        <div class="card-info"><strong>位置情報：</strong></div>
+                        <div class="card-info"><span class="value">電力設備-D区域-1</span></div>
+                        <div class="card-info"><strong>採集時間：</strong></div>
+                        <div class="card-info"><span class="value">2024-03-11 11:42:07</span></div>
+                        <div class="card-actions">
+                            <button class="card-btn secondary">履歴データ</button>
+                            <button class="card-btn warning">修正記録</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detection-card">
+                    <div class="card-image">
+                        <img src="2025-07-03-20_02_04_320-113-1-0.jpg" alt="電力メーター">
+                        <div class="status-badge status-online">オンライン</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="edit-icon" onclick="openEditModal('圧力蛇口1101117242')">✏️</div>
+                        <div class="card-info"><strong>読数：</strong><span class="value">12 kWh</span></div>
+                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                        <div class="card-info"><strong>位置情報：</strong></div>
+                        <div class="card-info"><span class="value">圧力設備-E区域-2</span></div>
+                        <div class="card-info"><strong>採集時間：</strong></div>
+                        <div class="card-info"><span class="value">2024-01-15 16:45:23</span></div>
+                        <div class="card-actions">
+                            <button class="card-btn secondary">履歴データ</button>
+                            <button class="card-btn warning">修正記録</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 2 Content -->
+            <div id="page2" class="detection-grid hidden">
+                <div class="detection-card">
+                    <div class="card-image">
+                        <img src="2025-07-03-00_02_42_236-113-数码管展示-0.jpg" alt="ガスメーター">
+                        <div class="status-badge status-online">オンライン</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="edit-icon" onclick="openEditModal('ガス供給システム')">✏️</div>
+                        <div class="card-info"><strong>読数：</strong><span class="value">2547 m³</span></div>
+                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                        <div class="card-info"><strong>位置情報：</strong></div>
+                        <div class="card-info"><span class="value">ガス設備-F区域-1</span></div>
+                        <div class="card-info"><strong>採集時間：</strong></div>
+                        <div class="card-info"><span class="value">2025-07-04 14:22:15</span></div>
+                        <div class="card-actions">
+                            <button class="card-btn secondary">履歴データ</button>
+                            <button class="card-btn primary">規模データ</button>
+                            <button class="card-btn warning">修正記録</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detection-card">
+                    <div class="card-image">
+                        <img src="2025-07-03-00_01_56_345-113-压差表-0.jpg" alt="流量計">
+                        <div class="status-badge status-processing">メンテナンス中</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="edit-icon" onclick="openEditModal('流量監視装置')">✏️</div>
+                        <div class="card-info"><strong>読数：</strong><span class="value">89.5 L/min</span></div>
+                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                        <div class="card-info"><strong>位置情報：</strong></div>
+                        <div class="card-info"><span class="value">流量制御-G区域-3</span></div>
+                        <div class="card-info"><strong>採集時間：</strong></div>
+                        <div class="card-info"><span class="value">2025-07-04 13:45:32</span></div>
+                        <div class="card-actions">
+                            <button class="card-btn secondary">履歴データ</button>
+                            <button class="card-btn warning">修正記録</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detection-card">
+                    <div class="card-image">
+                        <img src="2025-07-03-00_03_28_384-113-流量计-0.jpg" alt="湿度計">
+                        <div class="status-badge status-online">オンライン</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="edit-icon" onclick="openEditModal('環境湿度監視')">✏️</div>
+                        <div class="card-info"><strong>読数：</strong><span class="value">68.2 %</span></div>
+                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                        <div class="card-info"><strong>位置情報：</strong></div>
+                        <div class="card-info"><span class="value">環境監視-H区域-2</span></div>
+                        <div class="card-info"><strong>採集時間：</strong></div>
+                        <div class="card-info"><span class="value">2025-07-04 14:58:07</span></div>
+                        <div class="card-actions">
+                            <button class="card-btn secondary">履歴データ</button>
+                            <button class="card-btn primary">規模データ</button>
+                            <button class="card-btn warning">修正記録</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pagination">
+                <button onclick="goToPage(1)" id="page1btn" class="active">1</button>
+                <button onclick="goToPage(2)" id="page2btn">2</button>
+            </div>
+        </main>
+    </div>
+    
+    <!-- 编辑模态框 -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">メーター設定編集</h3>
+                <button class="close-btn" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="editForm">
+                <div class="form-group">
+                    <label class="form-label">メーター名称</label>
+                    <input type="text" id="meterName" class="form-input" placeholder="メーター名称を入力">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">メータータイプ</label>
+                    <select id="meterType" class="form-select">
+                        <option value="temperature">温度計</option>
+                        <option value="pressure">圧力計</option>
+                        <option value="water">水道メーター</option>
+                        <option value="electric">電力メーター</option>
+                        <option value="digital">デジタル表示</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">読数単位</label>
+                    <select id="unit" class="form-select">
+                        <option value="度">度</option>
+                        <option value="kWh">kWh</option>
+                        <option value="L">L</option>
+                        <option value="Pa">Pa</option>
+                        <option value="倍">倍</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">位置情報</label>
+                    <input type="text" id="location" class="form-input" placeholder="例：A区域-設備1-位置1">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">収集間隔（分）</label>
+                    <input type="number" id="interval" class="form-input" value="30" min="1" max="1440">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">アラーム閾値</label>
+                    <input type="number" id="threshold" class="form-input" placeholder="アラーム閾値を設定">
+                </div>
+            </form>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeEditModal()">キャンセル</button>
+                <button class="modal-btn confirm" onclick="saveChanges()">確認</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+
+        function goToPage(pageNumber) {
+            currentPage = pageNumber;
+            
+            // Hide all pages
+            document.getElementById('page1').classList.add('hidden');
+            document.getElementById('page2').classList.add('hidden');
+            
+            // Remove active class from all buttons
+            document.getElementById('page1btn').classList.remove('active');
+            document.getElementById('page2btn').classList.remove('active');
+            
+            // Show selected page and activate button
+            if (pageNumber === 1) {
+                document.getElementById('page1').classList.remove('hidden');
+                document.getElementById('page1btn').classList.add('active');
+            } else {
+                document.getElementById('page2').classList.remove('hidden');
+                document.getElementById('page2btn').classList.add('active');
+            }
+        }
+
+        function openEditModal(meterName) {
+            document.getElementById('meterName').value = meterName;
+            document.getElementById('editModal').style.display = 'block';
+        }
+		
+		function navigateToHome() {
+            window.location.href = 'spsm_dashboard.html';
+        }
+        
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+        
+        function saveChanges() {
+            // 获取表单数据
+            const meterName = document.getElementById('meterName').value;
+            const meterType = document.getElementById('meterType').value;
+            const unit = document.getElementById('unit').value;
+            const location = document.getElementById('location').value;
+            const interval = document.getElementById('interval').value;
+            const threshold = document.getElementById('threshold').value;
+            
+            // 这里可以添加保存逻辑
+            alert('設定が保存されました！\n' + 
+                  'メーター名: ' + meterName + '\n' +
+                  'タイプ: ' + meterType + '\n' +
+                  '単位: ' + unit + '\n' +
+                  '位置: ' + location + '\n' +
+                  '収集間隔: ' + interval + '分\n' +
+                  'アラーム閾値: ' + threshold);
+            
+            closeEditModal();
+        }
+        
+        // 模态框外部点击关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target == modal) {
+                closeEditModal();
+            }
+        }
+    </script>
+</body>
+</html>

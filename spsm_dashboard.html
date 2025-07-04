@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERABOX管理システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: #0a1628;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* 侧边栏 */
+        .sidebar {
+            width: 200px;
+            background: #001529;
+            padding: 0;
+            border-right: 1px solid #1f2937;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 20px 16px;
+            border-bottom: 1px solid #1f2937;
+        }
+        
+        .logo-icon {
+            height: 16px;
+            width: auto;
+            margin-right: 12px;
+            background-image: url('logo2.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        
+        .logo-text {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .menu {
+            list-style: none;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background: #1c2542;
+        }
+        
+        .menu-item.active {
+            background: #1890ff;
+            border-left-color: #40a9ff;
+        }
+        
+        .menu-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 12px;
+            opacity: 0.8;
+        }
+        
+        /* 顶部栏 */
+        .header {
+            background: #001529;
+            padding: 0 24px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            height: 64px;
+            border-bottom: 1px solid #1f2937;
+        }
+        
+        .user-info {
+            color: #ffffff;
+            font-size: 14px;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 24px;
+            background: #0a1628;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 24px;
+            height: calc(100vh - 112px);
+            overflow-y: auto;
+        }
+        
+        /* 卡片样式 */
+        .card {
+            background: #1a2332;
+            border-radius: 8px;
+            padding: 24px;
+            border: 1px solid #2d3a4b;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            padding-left: 8px;
+            border-left: 3px solid #1890ff;
+        }
+        
+        /* 仪表类型图表 */
+        .meter-types {
+            position: relative;
+        }
+        
+        .chart-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .donut-chart {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+        
+        .donut-chart svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+        
+        /* 设备状态 */
+        .device-status {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .status-item {
+            text-align: center;
+        }
+        
+        .status-label {
+            font-size: 14px;
+            color: #8c9eb5;
+            margin-bottom: 8px;
+        }
+        
+        .status-value {
+            font-size: 36px;
+            font-weight: bold;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 4px;
+        }
+        
+        .status-total {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .status-online {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .status-offline {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .status-progress {
+            width: 100px;
+            height: 4px;
+            background: #2d3a4b;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        
+        .status-progress-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        
+        .online-progress {
+            background: linear-gradient(90deg, #43e97b, #38f9d7);
+            width: 85%;
+        }
+        
+        .offline-progress {
+            background: linear-gradient(90deg, #fa709a, #fee140);
+            width: 15%;
+        }
+        
+        /* 图表样式 */
+        .chart {
+            height: 300px;
+            position: relative;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        /* 下拉菜单样式 */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-select {
+            background: #2d3a4b;
+            border: 1px solid #3a4a5c;
+            border-radius: 4px;
+            padding: 6px 30px 6px 12px;
+            color: #ffffff;
+            font-size: 14px;
+            width: 120px;
+            cursor: pointer;
+            appearance: none;
+            position: relative;
+        }
+        
+        .dropdown-select:focus {
+            outline: none;
+            border-color: #1890ff;
+        }
+        
+        .dropdown::after {
+            content: '▼';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8c9eb5;
+            font-size: 10px;
+            pointer-events: none;
+        }
+        
+        /* 水平条形图样式 */
+        .horizontal-chart {
+            height: 300px;
+            position: relative;
+            padding: 20px;
+        }
+        
+        .horizontal-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .horizontal-bar-label {
+            width: 80px;
+            font-size: 14px;
+            color: #ffffff;
+            margin-right: 20px;
+        }
+        
+        .horizontal-bar-container {
+            flex: 1;
+            height: 30px;
+            background: #2d3a4b;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .horizontal-bar-fill {
+            height: 100%;
+            border-radius: 15px;
+            position: relative;
+            transition: width 0.8s ease;
+        }
+        
+        .horizontal-bar-value {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .blue-gradient {
+            background: linear-gradient(90deg, #1890ff, #40a9ff);
+        }
+        
+        .green-gradient {
+            background: linear-gradient(90deg, #52c41a, #73d13d);
+        }
+        
+        /* X轴刻度 */
+        .x-axis {
+            position: absolute;
+            bottom: 20px;
+            left: 100px;
+            right: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #8c9eb5;
+        }
+        
+        .x-axis::before {
+            content: '';
+            position: absolute;
+            top: -180px;
+            left: 0;
+            width: 100%;
+            height: 180px;
+            background: repeating-linear-gradient(
+                to right,
+                transparent 0,
+                transparent calc(20% - 1px),
+                rgba(255, 255, 255, 0.1) calc(20% - 1px),
+                rgba(255, 255, 255, 0.1) 20%
+            );
+        }
+        
+        .chart-search::placeholder {
+            color: #8c9eb5;
+        }
+        
+        .bar-chart {
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            height: 250px;
+            padding: 20px 0;
+        }
+        
+        .bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .bar-column {
+            width: 40px;
+            background: linear-gradient(180deg, #1890ff 0%, #40a9ff 100%);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .bar-column:hover {
+            transform: scaleY(1.05);
+        }
+        
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #ffffff;
+            font-weight: 500;
+        }
+        
+        .bar-label {
+            font-size: 12px;
+            color: #8c9eb5;
+            white-space: nowrap;
+            margin-top: 8px;
+            position: relative;
+        }
+        
+        /* Y轴刻度 */
+        .y-axis {
+            position: absolute;
+            left: 0;
+            top: 20px;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #8c9eb5;
+        }
+        
+        .y-axis::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            width: calc(100% - 30px);
+            height: 100%;
+            background-image: 
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+            background-position: 
+                0 0%,
+                0 20%,
+                0 40%,
+                0 60%,
+                0 80%;
+            background-size: 100% 20%;
+            background-repeat: no-repeat;
+        }
+        
+        /* Y=0 水平实白线 */
+        .y-axis::after {
+            content: '';
+            position: absolute;
+            left: 30px;
+            bottom: 0;
+            width: calc(100% - 30px);
+            height: 2px;
+            background: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <div class="logo-text">TERABOX 管理システム</div>
+            </div>
+            <ul class="menu">
+                <li class="menu-item active">
+                    <span class="menu-icon">🏠</span>
+                    トップページ
+                </li>
+                <li class="menu-item" onclick="navigateToDetection()">
+                    <span class="menu-icon">📏</span>
+                    メーターの目盛
+                </li>
+                <li class="menu-item">
+                    <span class="menu-icon">📈</span>
+                    データの傾向
+                </li>
+                <li class="menu-item">
+                    <span class="menu-icon">⚙️</span>
+                    インストールの関連付け
+                </li>
+                <li class="menu-item">
+                    <span class="menu-icon">📱</span>
+                    メーターの管理
+                </li>
+                <li class="menu-item">
+                    <span class="menu-icon">📋</span>
+                    メーターの型
+                </li>
+                <li class="menu-item">
+                    <span class="menu-icon">🖥️</span>
+                    端末の管理
+                </li>
+                <li class="menu-item">
+                    <span class="menu-icon">📅</span>
+                    ログ管理
+                </li>
+                <li class="menu-item">
+                    <span class="menu-icon">👥</span>
+                    グループ管理
+                </li>
+                <li class="menu-item">
+                    <span class="menu-icon">👤</span>
+                    ユーザーセンター
+                </li>
+            </ul>
+        </div>
+        
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <div class="header">
+                <div class="user-info">テストアカウント</div>
+            </div>
+            
+            <div class="content">
+                <div class="dashboard-grid">
+                    <!-- 計器タイプ -->
+                    <div class="card meter-types">
+                        <div class="card-title">計器タイプ</div>
+                        <div class="chart-container">
+                            <div class="donut-chart">
+                                <svg viewBox="0 0 200 200">
+                                    <!-- 圧力表 - 青緑色 -->
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#2d3a4b" stroke-width="20"/>
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#13c2c2" stroke-width="20" 
+                                            stroke-dasharray="125.6 376.8" stroke-dashoffset="0"/>
+                                    <!-- 温度表 - 緑色 -->
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#52c41a" stroke-width="20" 
+                                            stroke-dasharray="62.8 439.6" stroke-dashoffset="-125.6"/>
+                                    <!-- 温度表 - 紫色 -->
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#722ed1" stroke-width="20" 
+                                            stroke-dasharray="31.4 470.9" stroke-dashoffset="-188.4"/>
+                                    <!-- 電表 - 青色 -->
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#1890ff" stroke-width="20" 
+                                            stroke-dasharray="31.4 470.9" stroke-dashoffset="-219.8"/>
+                                    <!-- 水表 - 黄色 -->
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#fadb14" stroke-width="20" 
+                                            stroke-dasharray="62.8 439.6" stroke-dashoffset="-251.2"/>
+                                    <!-- 燃気表 - オレンジ色 -->
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#fa8c16" stroke-width="20" 
+                                            stroke-dasharray="31.4 470.9" stroke-dashoffset="-314"/>
+                                    <!-- 圧差表 - 深紫色 -->
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#9254de" stroke-width="20" 
+                                            stroke-dasharray="31.4 470.9" stroke-dashoffset="-345.4"/>
+                                </svg>
+                            </div>
+                            <div class="legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #13c2c2;"></div>
+                                    <span>圧力表</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #52c41a;"></div>
+                                    <span>組合計器</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #722ed1;"></div>
+                                    <span>温度表</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #1890ff;"></div>
+                                    <span>その他</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #fadb14;"></div>
+                                    <span>水表</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #fa8c16;"></div>
+                                    <span>燃気表</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #9254de;"></div>
+                                    <span>圧差表</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 機器状態 -->
+                    <div class="card">
+                        <div class="card-title">機器状態</div>
+                        <div class="device-status">
+                            <div class="status-item">
+                                <div class="status-label">機器総数量</div>
+                                <div class="status-value status-total">2<small style="font-size: 24px;">2</small></div>
+                                <div class="status-progress">
+                                    <div class="status-progress-fill" style="background: linear-gradient(90deg, #4facfe, #00f2fe); width: 100%;"></div>
+                                </div>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-label">オンライン機器数量</div>
+                                <div class="status-value status-online">1<small style="font-size: 24px;">4</small></div>
+                                <div class="status-progress">
+                                    <div class="status-progress-fill online-progress"></div>
+                                </div>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-label">オフライン機器数量</div>
+                                <div class="status-value status-offline">0<small style="font-size: 24px;">1</small></div>
+                                <div class="status-progress">
+                                    <div class="status-progress-fill offline-progress"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 警報計器分析 -->
+                    <div class="card">
+                        <div class="card-title">警報計器分布</div>
+                        <div class="chart-header">
+                            <span></span>
+                            <div class="dropdown">
+                                <select class="dropdown-select" id="alarmChart" onchange="updateAlarmChart()">
+                                    <option value="温度表">温度表</option>
+                                    <option value="温度表">温度表</option>
+                                    <option value="圧力表">圧力表</option>
+                                    <option value="水表">水表</option>
+                                    <option value="電表">電表</option>
+                                    <option value="燃気表">燃気表</option>
+                                    <option value="圧差表" selected>圧差表</option>
+                                    <option value="組合数码管">組合数码管</option>
+                                    <option value="その他">その他</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart">
+                            <div class="y-axis">
+                                <span>1</span>
+                                <span>0.8</span>
+                                <span>0.6</span>
+                                <span>0.4</span>
+                                <span>0.2</span>
+                                <span>0</span>
+                            </div>
+                            <div class="bar-chart" id="alarmBarChart">
+                                <div class="bar">
+                                    <div class="bar-column" style="height: 200px;">
+                                        <div class="bar-value">1</div>
+                                    </div>
+                                    <div class="bar-label">照片异常</div>
+                                </div>
+                                <div class="bar">
+                                    <div class="bar-column" style="height: 0px;">
+                                        <div class="bar-value">0</div>
+                                    </div>
+                                    <div class="bar-label">電量低</div>
+                                </div>
+                                <div class="bar">
+                                    <div class="bar-column" style="height: 0px;">
+                                        <div class="bar-value">0</div>
+                                    </div>
+                                    <div class="bar-label">信号弱</div>
+                                </div>
+                                <div class="bar">
+                                    <div class="bar-column" style="height: 0px;">
+                                        <div class="bar-value">0</div>
+                                    </div>
+                                    <div class="bar-label">温度异常</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 未処理の警報ログ分布 -->
+                    <div class="card">
+                        <div class="card-title">未処理の警報ログ分布</div>
+                        <div class="chart-header">
+                            <span></span>
+                            <div class="dropdown">
+                                <select class="dropdown-select" id="logChart" onchange="updateLogChart()">
+                                    <option value="温度表">温度表</option>
+                                    <option value="温度表">温度表</option>
+                                    <option value="圧力表">圧力表</option>
+                                    <option value="水表">水表</option>
+                                    <option value="電表">電表</option>
+                                    <option value="燃気表">燃気表</option>
+                                    <option value="圧差表" selected>圧差表</option>
+                                    <option value="組合数码管">組合数码管</option>
+                                    <option value="その他">その他</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart">
+                            <div class="y-axis">
+                                <span>100</span>
+                                <span>80</span>
+                                <span>60</span>
+                                <span>40</span>
+                                <span>20</span>
+                                <span>0</span>
+                            </div>
+                            <div class="bar-chart" id="logBarChart">
+                                <div class="bar">
+                                    <div class="bar-column" style="height: 190px;">
+                                        <div class="bar-value">95</div>
+                                    </div>
+                                    <div class="bar-label">照片异常</div>
+                                </div>
+                                <div class="bar">
+                                    <div class="bar-column" style="height: 0px;">
+                                        <div class="bar-value">0</div>
+                                    </div>
+                                    <div class="bar-label">電量低</div>
+                                </div>
+                                <div class="bar">
+                                    <div class="bar-column" style="height: 0px;">
+                                        <div class="bar-value">0</div>
+                                    </div>
+                                    <div class="bar-label">信号弱</div>
+                                </div>
+                                <div class="bar">
+                                    <div class="bar-column" style="height: 0px;">
+                                        <div class="bar-value">0</div>
+                                    </div>
+                                    <div class="bar-label">温度异常</div>
+                                </div>
+                                <div class="bar">
+                                    <div class="bar-column" style="height: 2px;">
+                                        <div class="bar-value">1</div>
+                                    </div>
+                                    <div class="bar-label">設備オフライン</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 一級分組統計図 -->
+                    <div class="card">
+                        <div class="card-title">一級分組統計図</div>
+                        <div class="horizontal-chart">
+                            <div class="horizontal-bar">
+                                <div class="horizontal-bar-label">默认分组</div>
+                                <div class="horizontal-bar-container">
+                                    <div class="horizontal-bar-fill blue-gradient" style="width: 88%;">
+                                        <div class="horizontal-bar-value">22</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="x-axis">
+                                <span>0</span>
+                                <span>5</span>
+                                <span>10</span>
+                                <span>15</span>
+                                <span>20</span>
+                                <span>25</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 二級分組統計図 -->
+                    <div class="card">
+                        <div class="card-title">二級分組統計図</div>
+                        <div class="horizontal-chart">
+                            <div class="horizontal-bar">
+                                <div class="horizontal-bar-label">默认分组</div>
+                                <div class="horizontal-bar-container">
+                                    <div class="horizontal-bar-fill green-gradient" style="width: 88%;">
+                                        <div class="horizontal-bar-value">22</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="x-axis">
+                                <span>0</span>
+                                <span>5</span>
+                                <span>10</span>
+                                <span>15</span>
+                                <span>20</span>
+                                <span>25</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 数据配置
+        const chartData = {
+            '圧差表': {
+                alarm: [
+                    { label: '照片异常', value: 1, height: 200 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 }
+                ],
+                log: [
+                    { label: '照片异常', value: 95, height: 190 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 },
+                    { label: '設備オフライン', value: 1, height: 2 }
+                ]
+            },
+            '温度表': {
+                alarm: [
+                    { label: '照片异常', value: 0, height: 0 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 }
+                ],
+                log: [
+                    { label: '照片异常', value: 0, height: 0 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 },
+                    { label: '設備オフライン', value: 0, height: 0 }
+                ]
+            },
+            '圧力表': {
+                alarm: [
+                    { label: '照片异常', value: 0, height: 0 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 }
+                ],
+                log: [
+                    { label: '照片异常', value: 0, height: 0 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 },
+                    { label: '設備オフライン', value: 0, height: 0 }
+                ]
+            },
+            '水表': {
+                alarm: [
+                    { label: '照片异常', value: 0, height: 0 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 }
+                ],
+                log: [
+                    { label: '照片异常', value: 0, height: 0 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 },
+                    { label: '設備オフライン', value: 0, height: 0 }
+                ]
+            },
+            '電表': {
+                alarm: [
+                    { label: '照片异常', value: 0, height: 0 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 }
+                ],
+                log: [
+                    { label: '照片异常', value: 0, height: 0 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 },
+                    { label: '設備オフライン', value: 0, height: 0 }
+                ]
+            },
+            '燃気表': {
+                alarm: [
+                    { label: '照片异常', value: 0, height: 0 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 }
+                ],
+                log: [
+                    { label: '照片异常', value: 0, height: 0 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 },
+                    { label: '設備オフライン', value: 0, height: 0 }
+                ]
+            },
+            '組合数码管': {
+                alarm: [
+                    { label: '照片异常', value: 0, height: 0 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 }
+                ],
+                log: [
+                    { label: '照片异常', value: 0, height: 0 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 },
+                    { label: '設備オフライン', value: 0, height: 0 }
+                ]
+            },
+            'その他': {
+                alarm: [
+                    { label: '照片异常', value: 0, height: 0 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 }
+                ],
+                log: [
+                    { label: '照片异常', value: 0, height: 0 },
+                    { label: '電量低', value: 0, height: 0 },
+                    { label: '信号弱', value: 0, height: 0 },
+                    { label: '温度异常', value: 0, height: 0 },
+                    { label: '設備オフライン', value: 0, height: 0 }
+                ]
+            }
+        };
+        
+        // 更新图表数据
+        function updateChart(chartType, selectedValue) {
+            const data = chartData[selectedValue];
+            const chartContainer = document.getElementById(chartType === 'alarm' ? 'alarmBarChart' : 'logBarChart');
+            const dataSet = chartType === 'alarm' ? data.alarm : data.log;
+            
+            const bars = chartContainer.querySelectorAll('.bar');
+            
+            dataSet.forEach((item, index) => {
+                if (bars[index]) {
+                    const column = bars[index].querySelector('.bar-column');
+                    const value = bars[index].querySelector('.bar-value');
+                    
+                    column.style.height = item.height + 'px';
+                    value.textContent = item.value;
+                }
+            });
+        }
+		
+		function navigateToDetection() {
+    window.location.href = 'spsm-detection-system.html';
+}
+        
+        // 告警图表更新
+        function updateAlarmChart() {
+            const select = document.getElementById('alarmChart');
+            updateChart('alarm', select.value);
+        }
+        
+        // 日志图表更新
+        function updateLogChart() {
+            const select = document.getElementById('logChart');
+            updateChart('log', select.value);
+        }
+        
+        // 初期化設定で圧差表を選択
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('alarmChart').value = '圧差表';
+            document.getElementById('logChart').value = '圧差表';
+        });
+    </script>
+</body>
+</html>
