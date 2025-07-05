@@ -187,7 +187,9 @@
             overflow: hidden;
             position: relative;
             display: flex;
-            height: 180px;
+            height: 216px;
+            padding: 12px;
+            gap: 12px;
         }
         
         .card-header {
@@ -273,8 +275,8 @@
         }
         
         .card-image {
-            width: 255px;
-            height: 100%;
+            width: 100%;
+            height: 140px;
             background-color: #e2e8f0;
             display: flex;
             align-items: center;
@@ -289,6 +291,41 @@
             height: 100%;
             object-fit: cover;
             border-radius: 0;
+        }
+        
+        /* 新增：卡片头部信息样式 */
+        .card-header-info {
+            padding: 8px 12px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            text-align: center;
+        }
+        
+        .meter-id-link {
+            color: #3182ce;
+            text-decoration: underline;
+            font-size: 14px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .meter-id-link:hover {
+            color: #2c5282;
+        }
+        
+        .meter-type-status {
+            font-size: 12px;
+            color: #2d3748;
+            font-weight: bold;
+        }
+        
+        .status-online {
+            color: #38a169;
+        }
+        
+        .status-offline {
+            color: #e53e3e;
         }
         
         .meter-type-badge {
@@ -326,21 +363,18 @@
         }
         
         .card-content {
-            padding: 12px;
-            flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            position: relative;
+            gap: 6px;
         }
         
         .edit-icon {
             position: absolute;
             top: 8px;
             right: 8px;
-            color: #3182ce;
+            color: #17a2b8;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             background: white;
             border-radius: 50%;
             width: 24px;
@@ -356,19 +390,26 @@
         }
         
         .card-info {
-            font-size: 11px;
-            margin-bottom: 4px;
+            font-size: 13px;
+            margin-bottom: 6px;
             line-height: 1.4;
         }
         
         .card-info strong {
-            color: #2d3748;
+            color: #718096;
             font-weight: 600;
+            margin-right: 8px;
         }
         
         .card-info .value {
-            color: #4a5568;
-            font-weight: normal;
+            color: #2d3748;
+            font-weight: bold;
+        }
+        
+        .card-info .reading-value {
+            color: #2d3748;
+            font-weight: bold;
+            font-size: 14px;
         }
         
         .battery-indicator {
@@ -427,18 +468,19 @@
         
         .card-actions {
             display: flex;
-            gap: 4px;
-            margin-top: 8px;
+            gap: 8px;
+            margin-top: 12px;
         }
         
         .card-btn {
-            padding: 3px 6px;
-            border-radius: 3px;
-            font-size: 9px;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
             cursor: pointer;
             border: none;
             flex: 1;
             text-align: center;
+            font-weight: bold;
         }
         
         .card-btn.primary {
@@ -452,8 +494,8 @@
         }
         
         .card-btn.warning {
-            background-color: #ed8936;
-            color: white;
+            background-color: #ffd700;
+            color: #2d3748;
         }
         
         .pagination {
@@ -586,7 +628,7 @@
 <body>
     <header class="header">
         <div class="header-left">
-            <img src="default.33b8ad3f.png" alt="Terabox Logo" class="logo">
+            <img src="terabox-logo.png" alt="Terabox Logo" class="logo">
             <span class="title">TERABOX スマート検出システム</span>
         </div>
         <div class="user-info">テストアカウントユーザー</div>
@@ -595,45 +637,45 @@
     <div class="container">
         <nav class="sidebar">
             <div class="nav-item" onclick="navigateToHome()">
-    <div class="nav-icon"></div>
-    トップページ
-</div>
-<div class="nav-item active">
-    <div class="nav-icon"></div>
-    メーターの目盛
-</div>
-<div class="nav-item">
-    <div class="nav-icon"></div>
-    データの傾向
-</div>
-<div class="nav-item">
-    <div class="nav-icon"></div>
-    インストールの関連付け
-</div>
-<div class="nav-item">
-    <div class="nav-icon"></div>
-    メーターの管理
-</div>
-<div class="nav-item">
-    <div class="nav-icon"></div>
-    メーターの型
-</div>
-<div class="nav-item">
-    <div class="nav-icon"></div>
-    端末の管理
-</div>
-<div class="nav-item">
-    <div class="nav-icon"></div>
-    ログ管理
-</div>
-<div class="nav-item">
-    <div class="nav-icon"></div>
-    グループ管理
-</div>
-<div class="nav-item">
-    <div class="nav-icon"></div>
-    ユーザーセンター
-</div>
+                <div class="nav-icon"></div>
+                トップページ
+            </div>
+            <div class="nav-item active">
+                <div class="nav-icon"></div>
+                メーターの目盛
+            </div>
+            <div class="nav-item" onclick="navigateToAnalysis()">
+                <div class="nav-icon"></div>
+                データの傾向
+            </div>
+            <div class="nav-item" onclick="navigateToInstall()">
+                <div class="nav-icon"></div>
+                インストールの関連付け
+            </div>
+            <div class="nav-item" onclick="navigateToEquipment()">
+                <div class="nav-icon"></div>
+                メーターの管理
+            </div>
+            <div class="nav-item" onclick="navigateToBasicEquipment()">
+                <div class="nav-icon"></div>
+                メーターの型
+            </div>
+            <div class="nav-item" onclick="navigateToTerminal()">
+                <div class="nav-icon"></div>
+                端末の管理
+            </div>
+            <div class="nav-item" onclick="navigateToLog()">
+                <div class="nav-icon"></div>
+                ログ管理
+            </div>
+            <div class="nav-item" onclick="navigateToGroup()">
+                <div class="nav-icon"></div>
+                グループ管理
+            </div>
+            <div class="nav-item" onclick="navigateToUserCenter()">
+                <div class="nav-icon"></div>
+                ユーザーセンター
+            </div>
         </nav>
         
         <main class="main-content">
@@ -684,124 +726,169 @@
             <!-- Page 1 Content -->
             <div id="page1" class="detection-grid">
                 <div class="detection-card">
-                    <div class="card-image">
-                        <img src="2025-07-03-00_03_28_384-113-流量计-0.jpg" alt="温度計">
-                        <div class="status-badge status-processing">画像取得中</div>
+                    <div class="card-left">
+                        <div class="card-header-info">
+                            <a href="#" class="meter-id-link" title="查看仪表管理">王</a>
+                            <div class="meter-type-status">温度表 / 单指针表 / <span class="status-online">在线</span></div>
+                        </div>
+                        <div class="card-image">
+                            <img src="2025-07-03-00_03_28_384-113-流量计-0.jpg" alt="温度計">
+                        </div>
                     </div>
-                    <div class="card-content">
+                    <div class="card-right">
                         <div class="edit-icon" onclick="openEditModal('王')">✏️</div>
-                        <div class="card-info"><strong>読数：</strong><span class="value">1 度</span></div>
-                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
-                        <div class="card-info"><strong>位置情報：</strong></div>
-                        <div class="card-info"><span class="value">默认分组-默认分组-1</span></div>
-                        <div class="card-info"><strong>採集時間：</strong></div>
-                        <div class="card-info"><span class="value">2024-06-20 21:00:23</span></div>
+                        <div class="card-content">
+                            <div class="card-info"><strong>读数:</strong><span class="reading-value">1 度</span></div>
+                            <div class="card-info"><strong>倍率:</strong><span class="value">1</span></div>
+                            <div class="card-info"><strong>终端状态:</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                            <div class="card-info"><strong>位置信息:</strong></div>
+                            <div class="card-info"><span class="value">默认分组-默认分组-1</span></div>
+                            <div class="card-info"><strong>采集时间:</strong></div>
+                            <div class="card-info"><span class="value">2024-06-20 21:00:23</span></div>
+                        </div>
                         <div class="card-actions">
-                            <button class="card-btn secondary">履歴データ</button>
-                            <button class="card-btn primary">規模データ</button>
-                            <button class="card-btn warning">修正記録</button>
+                            <button class="card-btn secondary">历史数据</button>
+                            <button class="card-btn warning">校准记录</button>
                         </div>
                     </div>
                 </div>
                 
                 <div class="detection-card">
-                    <div class="card-image">
-                        <img src="2025-07-03-00_01_56_345-113-压差表-0.jpg" alt="デジタル表示">
-                        <div class="status-badge status-processing">画像取得中</div>
+                    <div class="card-left">
+                        <div class="card-header-info">
+                            <a href="#" class="meter-id-link" title="查看仪表管理">1</a>
+                            <div class="meter-type-status">压差表 / 压差表 / <span class="status-online">在线</span></div>
+                        </div>
+                        <div class="card-image">
+                            <img src="2025-07-03-00_01_56_345-113-压差表-0.jpg" alt="デジタル表示">
+                        </div>
                     </div>
-                    <div class="card-content">
+                    <div class="card-right">
                         <div class="edit-icon" onclick="openEditModal('1')">✏️</div>
-                        <div class="card-info"><strong>読数：</strong><span class="value">123 倍</span></div>
-                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
-                        <div class="card-info"><strong>位置情報：</strong></div>
-                        <div class="card-info"><span class="value">液体タンク-A区域-2</span></div>
-                        <div class="card-info"><strong>採集時間：</strong></div>
-                        <div class="card-info"><span class="value">2023-07-03 11:01:08</span></div>
+                        <div class="card-content">
+                            <div class="card-info"><strong>读数:</strong><span class="reading-value">123 倍</span></div>
+                            <div class="card-info"><strong>倍率:</strong><span class="value">1</span></div>
+                            <div class="card-info"><strong>终端状态:</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                            <div class="card-info"><strong>位置信息:</strong></div>
+                            <div class="card-info"><span class="value">液体タンク-A区域-2</span></div>
+                            <div class="card-info"><strong>采集时间:</strong></div>
+                            <div class="card-info"><span class="value">2023-07-03 11:01:08</span></div>
+                        </div>
                         <div class="card-actions">
-                            <button class="card-btn secondary">履歴データ</button>
-                            <button class="card-btn primary">規模データ</button>
-                            <button class="card-btn warning">修正記録</button>
+                            <button class="card-btn secondary">历史数据</button>
+                            <button class="card-btn warning">校准记录</button>
                         </div>
                     </div>
                 </div>
                 
                 <div class="detection-card">
-                    <div class="card-image">
-                        <img src="2024-06-20-20_00_34_681-113-千-0.jpg" alt="水道メーター">
-                        <div class="status-badge status-online">オンライン</div>
+                    <div class="card-left">
+                        <div class="card-header-info">
+                            <a href="#" class="meter-id-link" title="查看仪表管理">水道蛇口監視</a>
+                            <div class="meter-type-status">水表 / 字轮表 / <span class="status-online">在线</span></div>
+                        </div>
+                        <div class="card-image">
+                            <img src="2024-06-20-20_00_34_681-113-千-0.jpg" alt="水道メーター">
+                        </div>
                     </div>
-                    <div class="card-content">
+                    <div class="card-right">
                         <div class="edit-icon" onclick="openEditModal('水道蛇口監視')">✏️</div>
-                        <div class="card-info"><strong>読数：</strong><span class="value">123 L</span></div>
-                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
-                        <div class="card-info"><strong>位置情報：</strong></div>
-                        <div class="card-info"><span class="value">水道設備-B区域-1</span></div>
-                        <div class="card-info"><strong>採集時間：</strong></div>
-                        <div class="card-info"><span class="value">2023-07-03 01:03:03</span></div>
+                        <div class="card-content">
+                            <div class="card-info"><strong>读数:</strong><span class="reading-value">123 L</span></div>
+                            <div class="card-info"><strong>倍率:</strong><span class="value">1</span></div>
+                            <div class="card-info"><strong>终端状态:</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                            <div class="card-info"><strong>位置信息:</strong></div>
+                            <div class="card-info"><span class="value">水道設備-B区域-1</span></div>
+                            <div class="card-info"><strong>采集时间:</strong></div>
+                            <div class="card-info"><span class="value">2023-07-03 01:03:03</span></div>
+                        </div>
                         <div class="card-actions">
-                            <button class="card-btn secondary">履歴データ</button>
-                            <button class="card-btn primary">規模データ</button>
-                            <button class="card-btn warning">修正記録</button>
+                            <button class="card-btn secondary">历史数据</button>
+                            <button class="card-btn warning">校准记录</button>
                         </div>
                     </div>
                 </div>
                 
                 <div class="detection-card">
-                    <div class="card-image">
-                        <img src="2025-07-03-00_03_22_653-113-水表培训-0.jpg" alt="圧力計">
-                        <div class="status-badge status-online">オンライン</div>
+                    <div class="card-left">
+                        <div class="card-header-info">
+                            <a href="#" class="meter-id-link" title="查看仪表管理">圧力計</a>
+                            <div class="meter-type-status">压差表 / 压差表 / <span class="status-online">在线</span></div>
+                        </div>
+                        <div class="card-image">
+                            <img src="2025-07-03-00_03_22_653-113-水表培训-0.jpg" alt="圧力計">
+                        </div>
                     </div>
-                    <div class="card-content">
+                    <div class="card-right">
                         <div class="edit-icon" onclick="openEditModal('圧力計')">✏️</div>
-                        <div class="card-info"><strong>読数：</strong><span class="value">46004874461770 Pa</span></div>
-                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
-                        <div class="card-info"><strong>位置情報：</strong></div>
-                        <div class="card-info"><span class="value">安全採取-C区域-3</span></div>
-                        <div class="card-info"><strong>採集時間：</strong></div>
-                        <div class="card-info"><span class="value">2023-07-03 01:01:54</span></div>
+                        <div class="card-content">
+                            <div class="card-info"><strong>读数:</strong><span class="reading-value">46004874461770 Pa</span></div>
+                            <div class="card-info"><strong>倍率:</strong><span class="value">1</span></div>
+                            <div class="card-info"><strong>终端状态:</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                            <div class="card-info"><strong>位置信息:</strong></div>
+                            <div class="card-info"><span class="value">安全採取-C区域-3</span></div>
+                            <div class="card-info"><strong>采集时间:</strong></div>
+                            <div class="card-info"><span class="value">2023-07-03 01:01:54</span></div>
+                        </div>
                         <div class="card-actions">
-                            <button class="card-btn secondary">履歴データ</button>
-                            <button class="card-btn warning">修正記録</button>
+                            <button class="card-btn secondary">历史数据</button>
+                            <button class="card-btn warning">校准记录</button>
                         </div>
                     </div>
                 </div>
                 
                 <div class="detection-card">
-                    <div class="card-image">
-                        <img src="default.33b8ad3f.png" alt="デジタル表示">
-                        <div class="status-badge status-online">オンライン</div>
+                    <div class="card-left">
+                        <div class="card-header-info">
+                            <a href="#" class="meter-id-link" title="查看仪表管理">144052093388</a>
+                            <div class="meter-type-status">电表 / 智能表 / <span class="status-online">在线</span></div>
+                        </div>
+                        <div class="card-image">
+                            <img src="default.33b8ad3f.png" alt="デジタル表示">
+                        </div>
                     </div>
-                    <div class="card-content">
+                    <div class="card-right">
                         <div class="edit-icon" onclick="openEditModal('144052093388')">✏️</div>
-                        <div class="card-info"><strong>読数：</strong><span class="value">144052093388 kWh</span></div>
-                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
-                        <div class="card-info"><strong>位置情報：</strong></div>
-                        <div class="card-info"><span class="value">電力設備-D区域-1</span></div>
-                        <div class="card-info"><strong>採集時間：</strong></div>
-                        <div class="card-info"><span class="value">2024-03-11 11:42:07</span></div>
+                        <div class="card-content">
+                            <div class="card-info"><strong>读数:</strong><span class="reading-value">14.16 kWh</span></div>
+                            <div class="card-info"><strong>倍率:</strong><span class="value">1</span></div>
+                            <div class="card-info"><strong>终端状态:</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                            <div class="card-info"><strong>位置信息:</strong></div>
+                            <div class="card-info"><span class="value">默认分组-默认分组-2</span></div>
+                            <div class="card-info"><strong>采集时间:</strong></div>
+                            <div class="card-info"><span class="value">2024-03-26 12:36:47</span></div>
+                        </div>
                         <div class="card-actions">
-                            <button class="card-btn secondary">履歴データ</button>
-                            <button class="card-btn warning">修正記録</button>
+                            <button class="card-btn secondary">历史数据</button>
+                            <button class="card-btn warning">校准记录</button>
                         </div>
                     </div>
                 </div>
                 
                 <div class="detection-card">
-                    <div class="card-image">
-                        <img src="2025-07-03-20_02_04_320-113-1-0.jpg" alt="電力メーター">
-                        <div class="status-badge status-online">オンライン</div>
+                    <div class="card-left">
+                        <div class="card-header-info">
+                            <a href="#" class="meter-id-link" title="查看仪表管理">圧力蛇口1101117242</a>
+                            <div class="meter-type-status">电表 / 智能表 / <span class="status-online">在线</span></div>
+                        </div>
+                        <div class="card-image">
+                            <img src="2025-07-03-20_02_04_320-113-1-0.jpg" alt="電力メーター">
+                        </div>
                     </div>
-                    <div class="card-content">
+                    <div class="card-right">
                         <div class="edit-icon" onclick="openEditModal('圧力蛇口1101117242')">✏️</div>
-                        <div class="card-info"><strong>読数：</strong><span class="value">12 kWh</span></div>
-                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
-                        <div class="card-info"><strong>位置情報：</strong></div>
-                        <div class="card-info"><span class="value">圧力設備-E区域-2</span></div>
-                        <div class="card-info"><strong>採集時間：</strong></div>
-                        <div class="card-info"><span class="value">2024-01-15 16:45:23</span></div>
+                        <div class="card-content">
+                            <div class="card-info"><strong>读数:</strong><span class="reading-value">12 kWh</span></div>
+                            <div class="card-info"><strong>倍率:</strong><span class="value">1</span></div>
+                            <div class="card-info"><strong>终端状态:</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                            <div class="card-info"><strong>位置信息:</strong></div>
+                            <div class="card-info"><span class="value">圧力設備-E区域-2</span></div>
+                            <div class="card-info"><strong>采集时间:</strong></div>
+                            <div class="card-info"><span class="value">2024-01-15 16:45:23</span></div>
+                        </div>
                         <div class="card-actions">
-                            <button class="card-btn secondary">履歴データ</button>
-                            <button class="card-btn warning">修正記録</button>
+                            <button class="card-btn secondary">历史数据</button>
+                            <button class="card-btn warning">校准记录</button>
                         </div>
                     </div>
                 </div>
@@ -810,63 +897,85 @@
             <!-- Page 2 Content -->
             <div id="page2" class="detection-grid hidden">
                 <div class="detection-card">
-                    <div class="card-image">
-                        <img src="2025-07-03-00_02_42_236-113-数码管展示-0.jpg" alt="ガスメーター">
-                        <div class="status-badge status-online">オンライン</div>
+                    <div class="card-left">
+                        <div class="card-header-info">
+                            <a href="#" class="meter-id-link" title="查看仪表管理">ガス供給システム</a>
+                            <div class="meter-type-status">其他 / 数码管 / <span class="status-online">在线</span></div>
+                        </div>
+                        <div class="card-image">
+                            <img src="2025-07-03-00_02_42_236-113-数码管展示-0.jpg" alt="ガスメーター">
+                        </div>
                     </div>
-                    <div class="card-content">
+                    <div class="card-right">
                         <div class="edit-icon" onclick="openEditModal('ガス供給システム')">✏️</div>
-                        <div class="card-info"><strong>読数：</strong><span class="value">2547 m³</span></div>
-                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
-                        <div class="card-info"><strong>位置情報：</strong></div>
-                        <div class="card-info"><span class="value">ガス設備-F区域-1</span></div>
-                        <div class="card-info"><strong>採集時間：</strong></div>
-                        <div class="card-info"><span class="value">2025-07-04 14:22:15</span></div>
+                        <div class="card-content">
+                            <div class="card-info"><strong>读数:</strong><span class="reading-value">2547 m³</span></div>
+                            <div class="card-info"><strong>倍率:</strong><span class="value">1</span></div>
+                            <div class="card-info"><strong>终端状态:</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                            <div class="card-info"><strong>位置信息:</strong></div>
+                            <div class="card-info"><span class="value">ガス設備-F区域-1</span></div>
+                            <div class="card-info"><strong>采集时间:</strong></div>
+                            <div class="card-info"><span class="value">2025-07-04 14:22:15</span></div>
+                        </div>
                         <div class="card-actions">
-                            <button class="card-btn secondary">履歴データ</button>
-                            <button class="card-btn primary">規模データ</button>
-                            <button class="card-btn warning">修正記録</button>
+                            <button class="card-btn secondary">历史数据</button>
+                            <button class="card-btn warning">校准记录</button>
                         </div>
                     </div>
                 </div>
                 
                 <div class="detection-card">
-                    <div class="card-image">
-                        <img src="2025-07-03-00_01_56_345-113-压差表-0.jpg" alt="流量計">
-                        <div class="status-badge status-processing">メンテナンス中</div>
+                    <div class="card-left">
+                        <div class="card-header-info">
+                            <a href="#" class="meter-id-link" title="查看仪表管理">流量監視装置</a>
+                            <div class="meter-type-status">其他 / 数码管 / <span class="status-offline">离线</span></div>
+                        </div>
+                        <div class="card-image">
+                            <img src="2025-07-03-00_01_56_345-113-压差表-0.jpg" alt="流量計">
+                        </div>
                     </div>
-                    <div class="card-content">
+                    <div class="card-right">
                         <div class="edit-icon" onclick="openEditModal('流量監視装置')">✏️</div>
-                        <div class="card-info"><strong>読数：</strong><span class="value">89.5 L/min</span></div>
-                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
-                        <div class="card-info"><strong>位置情報：</strong></div>
-                        <div class="card-info"><span class="value">流量制御-G区域-3</span></div>
-                        <div class="card-info"><strong>採集時間：</strong></div>
-                        <div class="card-info"><span class="value">2025-07-04 13:45:32</span></div>
+                        <div class="card-content">
+                            <div class="card-info"><strong>读数:</strong><span class="reading-value">89.5 L/min</span></div>
+                            <div class="card-info"><strong>倍率:</strong><span class="value">1</span></div>
+                            <div class="card-info"><strong>终端状态:</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                            <div class="card-info"><strong>位置信息:</strong></div>
+                            <div class="card-info"><span class="value">流量制御-G区域-3</span></div>
+                            <div class="card-info"><strong>采集时间:</strong></div>
+                            <div class="card-info"><span class="value">2025-07-04 13:45:32</span></div>
+                        </div>
                         <div class="card-actions">
-                            <button class="card-btn secondary">履歴データ</button>
-                            <button class="card-btn warning">修正記録</button>
+                            <button class="card-btn secondary">历史数据</button>
+                            <button class="card-btn warning">校准记录</button>
                         </div>
                     </div>
                 </div>
                 
                 <div class="detection-card">
-                    <div class="card-image">
-                        <img src="2025-07-03-00_03_28_384-113-流量计-0.jpg" alt="湿度計">
-                        <div class="status-badge status-online">オンライン</div>
+                    <div class="card-left">
+                        <div class="card-header-info">
+                            <a href="#" class="meter-id-link" title="查看仪表管理">環境湿度監視</a>
+                            <div class="meter-type-status">温度表 / 单指针表 / <span class="status-online">在线</span></div>
+                        </div>
+                        <div class="card-image">
+                            <img src="2025-07-03-00_03_28_384-113-流量计-0.jpg" alt="湿度計">
+                        </div>
                     </div>
-                    <div class="card-content">
+                    <div class="card-right">
                         <div class="edit-icon" onclick="openEditModal('環境湿度監視')">✏️</div>
-                        <div class="card-info"><strong>読数：</strong><span class="value">68.2 %</span></div>
-                        <div class="card-info"><strong>終端状態：</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
-                        <div class="card-info"><strong>位置情報：</strong></div>
-                        <div class="card-info"><span class="value">環境監視-H区域-2</span></div>
-                        <div class="card-info"><strong>採集時間：</strong></div>
-                        <div class="card-info"><span class="value">2025-07-04 14:58:07</span></div>
+                        <div class="card-content">
+                            <div class="card-info"><strong>读数:</strong><span class="reading-value">68.2 %</span></div>
+                            <div class="card-info"><strong>倍率:</strong><span class="value">1</span></div>
+                            <div class="card-info"><strong>终端状态:</strong><span class="battery-indicator"><div class="signal-indicator"><div class="signal-dot"></div><div class="signal-dot"></div><div class="signal-dot"></div></div><div class="battery-bar"></div></span></div>
+                            <div class="card-info"><strong>位置信息:</strong></div>
+                            <div class="card-info"><span class="value">環境監視-H区域-2</span></div>
+                            <div class="card-info"><strong>采集时间:</strong></div>
+                            <div class="card-info"><span class="value">2025-07-04 14:58:07</span></div>
+                        </div>
                         <div class="card-actions">
-                            <button class="card-btn secondary">履歴データ</button>
-                            <button class="card-btn primary">規模データ</button>
-                            <button class="card-btn warning">修正記録</button>
+                            <button class="card-btn secondary">历史数据</button>
+                            <button class="card-btn warning">校准记录</button>
                         </div>
                     </div>
                 </div>
@@ -959,9 +1068,42 @@
             document.getElementById('meterName').value = meterName;
             document.getElementById('editModal').style.display = 'block';
         }
-		
-		function navigateToHome() {
+        
+        // 导航功能函数
+        function navigateToHome() {
             window.location.href = 'spsm_dashboard.html';
+        }
+        
+        function navigateToAnalysis() {
+            window.location.href = 'http://47.103.60.131/#/index/analysis';
+        }
+        
+        function navigateToInstall() {
+            window.location.href = 'http://47.103.60.131/#/index/install';
+        }
+        
+        function navigateToEquipment() {
+            window.location.href = 'http://47.103.60.131/#/index/equipment';
+        }
+        
+        function navigateToBasicEquipment() {
+            window.location.href = 'http://47.103.60.131/#/index/basicEquipment';
+        }
+        
+        function navigateToTerminal() {
+            window.location.href = 'http://47.103.60.131/#/index/terminal';
+        }
+        
+        function navigateToLog() {
+            window.location.href = 'http://47.103.60.131/#/index/log';
+        }
+        
+        function navigateToGroup() {
+            window.location.href = 'http://47.103.60.131/#/index/group';
+        }
+        
+        function navigateToUserCenter() {
+            window.location.href = 'http://47.103.60.131/#/index/userCenter';
         }
         
         function closeEditModal() {

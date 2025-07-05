@@ -20,82 +20,83 @@
         
         .container {
             display: flex;
-            min-height: 100vh;
+            min-height: calc(100vh - 50px);
+            margin-top: 50px;
         }
         
-        /* 侧边栏 */
+        /* 统一侧边栏样式 */
         .sidebar {
             width: 200px;
-            background: #001529;
-            padding: 0;
-            border-right: 1px solid #1f2937;
+            background-color: #2d3748;
+            color: white;
+        }
+        
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #4a5568;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .nav-item:hover {
+            background-color: #4a5568;
+        }
+        
+        .nav-item.active {
+            background-color: #3182ce;
+        }
+        
+        .nav-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            background-color: #a0aec0;
+            border-radius: 2px;
+        }
+        
+        /* 统一顶部栏样式 */
+        .header {
+            background-color: #1a365d;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
         }
         
         .logo {
-            display: flex;
-            align-items: center;
-            padding: 20px 16px;
-            border-bottom: 1px solid #1f2937;
-        }
-        
-        .logo-icon {
-            height: 16px;
-            width: auto;
+            width: 32px;
+            height: 32px;
             margin-right: 12px;
-            background-image: url('logo2.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
+            object-fit: contain;
+            border-radius: 6px;
+            background-color: white;
+            padding: 2px;
         }
         
-        .logo-text {
-            font-size: 16px;
-            font-weight: 500;
-        }
-        
-        .menu {
-            list-style: none;
-        }
-        
-        .menu-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 24px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-left: 3px solid transparent;
-        }
-        
-        .menu-item:hover {
-            background: #1c2542;
-        }
-        
-        .menu-item.active {
-            background: #1890ff;
-            border-left-color: #40a9ff;
-        }
-        
-        .menu-icon {
-            width: 16px;
-            height: 16px;
-            margin-right: 12px;
-            opacity: 0.8;
-        }
-        
-        /* 顶部栏 */
-        .header {
-            background: #001529;
-            padding: 0 24px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            height: 64px;
-            border-bottom: 1px solid #1f2937;
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
         }
         
         .user-info {
-            color: #ffffff;
             font-size: 14px;
+            opacity: 0.9;
         }
         
         /* 主内容区 */
@@ -478,62 +479,61 @@
 </head>
 <body>
     <div class="container">
-        <!-- 侧边栏 -->
-        <div class="sidebar">
-            <div class="logo">
-                <div class="logo-icon"></div>
-                <div class="logo-text">TERABOX 管理システム</div>
+        <!-- 统一顶部栏，添加logo -->
+        <header class="header">
+            <div class="header-left">
+                <img src="terabox-logo.png" alt="Terabox Logo" class="logo">
+                <span class="title">TERABOX スマート検出システム</span>
             </div>
-            <ul class="menu">
-                <li class="menu-item active">
-                    <span class="menu-icon">🏠</span>
-                    トップページ
-                </li>
-                <li class="menu-item" onclick="navigateToDetection()">
-                    <span class="menu-icon">📏</span>
-                    メーターの目盛
-                </li>
-                <li class="menu-item">
-                    <span class="menu-icon">📈</span>
-                    データの傾向
-                </li>
-                <li class="menu-item">
-                    <span class="menu-icon">⚙️</span>
-                    インストールの関連付け
-                </li>
-                <li class="menu-item">
-                    <span class="menu-icon">📱</span>
-                    メーターの管理
-                </li>
-                <li class="menu-item">
-                    <span class="menu-icon">📋</span>
-                    メーターの型
-                </li>
-                <li class="menu-item">
-                    <span class="menu-icon">🖥️</span>
-                    端末の管理
-                </li>
-                <li class="menu-item">
-                    <span class="menu-icon">📅</span>
-                    ログ管理
-                </li>
-                <li class="menu-item">
-                    <span class="menu-icon">👥</span>
-                    グループ管理
-                </li>
-                <li class="menu-item">
-                    <span class="menu-icon">👤</span>
-                    ユーザーセンター
-                </li>
-            </ul>
-        </div>
+            <div class="user-info">テストアカウントユーザー</div>
+        </header>
+        
+        <!-- 统一侧边栏 -->
+        <nav class="sidebar">
+            <div class="nav-item active">
+                <div class="nav-icon"></div>
+                トップページ
+            </div>
+            <div class="nav-item" onclick="navigateToDetection()">
+                <div class="nav-icon"></div>
+                メーターの目盛
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"></div>
+                データの傾向
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"></div>
+                インストールの関連付け
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"></div>
+                メーターの管理
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"></div>
+                メーターの型
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"></div>
+                端末の管理
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"></div>
+                ログ管理
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"></div>
+                グループ管理
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"></div>
+                ユーザーセンター
+            </div>
+        </nav>
         
         <!-- 主内容区 -->
         <div class="main-content">
-            <div class="header">
-                <div class="user-info">テストアカウント</div>
-            </div>
-            
             <div class="content">
                 <div class="dashboard-grid">
                     <!-- 計器タイプ -->
@@ -940,10 +940,10 @@
                 }
             });
         }
-		
-		function navigateToDetection() {
-    window.location.href = 'spsm-detection-system.html';
-}
+        
+        function navigateToDetection() {
+            window.location.href = 'spsm-detection-system.html';
+        }
         
         // 告警图表更新
         function updateAlarmChart() {
